@@ -2,12 +2,9 @@ application =
 {
   content =
   {
-    width = 560,
-    height = 360,
-    scale = "letterbox",
-    imageSuffix =
-    {
-      ["@2"] = 2,
-    }
-  }
+    width = 960,
+    height = 640,
+    scale = "zoomEven"
+    
+  },
 }
