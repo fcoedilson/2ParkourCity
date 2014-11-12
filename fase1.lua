@@ -1,4 +1,3 @@
-
 -- fase1.lua
 
 W = display.contentWidth / 2
@@ -10,36 +9,45 @@ heightScreen = display.contentHeight
 topScreen = display.screenOriginY
 leftScreen = display.screenOriginX
 
+local widget = require("widget")
 
+--- storyboard
 local storyboard = require("storyboard")
-local widget = require "widget"
 local scene = storyboard.newScene()
 
 baseline = 280
 velocidade = 6
 
-local tAnt = system.getTimer()
-
-
-
--- Grass
--- This is doubled so we can slide it
--- When one of the grass images slides offscreen, we move it all the way to the right of the next one.
-
 
 -- A per-frame event to move the elements
-local tPrevious = system.getTimer()
+local tAnt = system.getTimer()
+local tprev = system.getTimer()
 
 local function move(event)
-	local tDelta = event.time - tPrevious
-	tPrevious = event.time
+	
+	local tdelta = event.time - tprev
+	tprev = event.time
 
-	local xOffset = ( 0.1 * tDelta )
+	local speed1 = 0.01*tdelta
+	local speed2 = 0.05*tdelta
+	local speed3 = 0.1*tdelta
 
-	calcada.x = calcada.x - xOffset
-	calcada2.x = calcada2.x - xOffset
-	pista.x = pista.x - xOffset
-	pista2.x = pista2.x - xOffset
+	cidade.x = cidade.x - speed1
+	cidade2.x = cidade2.x - speed1
+
+	calcada.x = calcada.x - speed3
+	calcada2.x = calcada2.x - speed3
+
+	pista.x = pista.x - speed3
+	pista2.x = pista2.x - speed3
+	
+	if (cidade.x + cidade.contentWidth/2) < 0 then
+		cidade:translate( 824 * 2, 0)
+	end
+
+	if (cidade2.x + cidade2.contentWidth/2) < 0 then
+		cidade2:translate( 824 * 2, 0)
+	end
 	
 	if (calcada.x + calcada.contentWidth/2) < 0 then
 		calcada:translate( 824 * 2, 0)
@@ -53,35 +61,22 @@ local function move(event)
 		pista:translate( 824 * 2, 0)
 	end
 	
-		if (pista2.x + pista2.contentWidth/2) < 0 then
+	if (pista2.x + pista2.contentWidth/2) < 0 then
 		pista2:translate( 824 * 2, 0)
 	end
 	
 end
 
 
--- A sprite sheet with a cat
-local person = graphics.newImageSheet("img/sprite.png", {width = 128, height=128, numFrames=15})
-
-local seqdata = {
-	name="andando",
-	start=1,
-	count=15,
-	time=500,
-	loopCount=0,
-}
-
-local instance1 = display.newSprite(person, seqdata)
-      instance1.x = display.contentWidth/2 - 100
-      instance1.y = baseline + 120
-      instance1:play()
-      instance1:setSequence("andando")
-
-
-
 background = display.newImage("img/urbando_fundo_cidade.png")
 background.x, background.y = W, H
 --background.width, background.height = 960, 640
+
+cidade = display.newImage("img/urbando_fundo_cidade.png")
+cidade.x, cidade.y = W, H
+
+cidade2 = display.newImage("img/urbando_fundo_cidade.png")
+cidade2.x, cidade2.y = W+824, H
 
 calcada = display.newImage("img/urbano_calcada_postes.png", 0, H)
 calcada.x, calcada.y = W, H
@@ -123,47 +118,52 @@ bs.x, bs.y = W+400, H+200
 local bd = display.newImage("img/bloco_urbano_duplo.png")
 bd.x, bd.y = W+180, H+200
 
+
 local bd = display.newImage("img/bloco_urbano_duplo.png")
 bd.x, bd.y = W, H+200
 
 
--- Called immediately after scene has moved onscreen:
-function scene:enterScene(event)
-    local group = self.view
-end
 
--- Called when scene is about to move offscreen:
-function scene:exitScene(event)
-    local group = self.view
-end
 
--- Called prior to the removal of scene's "view" (display group)
-function scene:destroyScene(event)
-    local group = self.view
-end
+-- A sprite sheet with a cat
+person = graphics.newImageSheet("img/greenman.png", {width = 128, height=128, numFrames=16, sheetContentWidth=512, sheetContentHeight=512})
+
+seqdata = {
+	name="andando",
+	sheet=person,
+	start=1,
+	count=15,
+	time=1000,
+	loopCount=0,
+}
+
+instance1 = display.newSprite(person, seqdata)
+     instance1.x = W
+     instance1.y = H+100
+     instance1:play()
+     -- instance1:setSequence("andando")
+
+
 
 
 Runtime:addEventListener( "enterFrame", move)
 
----------------------------------------------------------------------------------
--- END OF YOUR IMPLEMENTATION
----------------------------------------------------------------------------------
+local function voltarScene(event)
+    storyboard.gotoScene("menu", "fade", 500)
+    return true
+end
 
--- "createScene" event is dispatched if scene's view does not exist
-scene:addEventListener("createScene", scene)
 
--- "enterScene" event is dispatched whenever scene transition has finished
-scene:addEventListener("enterScene", scene)
 
--- "exitScene" event is dispatched before next scene's transition begins
-scene:addEventListener("exitScene", scene)
+local buttonVoltar = widget.newButton{
+	id = "regrasButton", 
+    left = (W/2 + 190),
+    top = H/2 + 285,
+    width = 180,
+    height = 100,
+    defaultFile = "img/botao_regras.png",
+    onEvent = voltarScene,
+}
 
--- "destroyScene" event is dispatched before view is unloaded, which can be
--- automatically unloaded in low memory situations, or explicitly via a call to
--- storyboard.purgeScene() or storyboard.removeScene().
-scene:addEventListener("destroyScene", scene)
-
----------------------------------------------------------------------------------
 
 return scene
-
