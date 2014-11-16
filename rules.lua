@@ -37,8 +37,8 @@ function scene:create( event )
 
 	local back = widget.newButton{
 		labelColor = { default={0}, over={128} },
-		defaultFile="img/botao_regras.png",
-		overFile="img/botao_regras.png",
+		defaultFile="img/botao_voltar.png",
+		overFile="img/botao_voltar.png",
 		width=154, height=80,
 		onRelease = goToMenu
 	}

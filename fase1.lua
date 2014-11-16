@@ -149,6 +149,7 @@ instance1 = display.newSprite(person, seqdata)
 Runtime:addEventListener( "enterFrame", move)
 
 local function voltarScene(event)
+    print "entrou no voltar"
     storyboard.gotoScene("menu", "fade", 500)
     return true
 end
